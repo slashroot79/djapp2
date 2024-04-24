@@ -26,22 +26,18 @@ jobs:
         run: |
           python -m venv antenv
           source antenv/bin/activate
-      
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+          pip install -r requirements.txt
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: Tar Artifacts to increase upload time
+        run: |
+          touch app.tar.gz
+          tar -czf app.tar.gz --exclude=app.tar.gz .
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: app.tar.gz
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,10 +53,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: python-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
-
+          
+      - name: Extract Tar
+        run: |
+          tar -xf app.tar.gz
+          rm app.tar.gz
       
       - name: Login to Azure
         uses: azure/login@v1
