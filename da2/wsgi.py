@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 import os
 import django
 
+print ("***************************++***************************")
+
 for k in sorted(os.environ.keys()):
     v = os.environ[k]
     print ('%-30s %s' % (k,v[:70]))
